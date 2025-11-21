@@ -1,3 +1,5 @@
+# API Header Spoofing
+
 Learn how HTTP header spoofing works through practical examples. This educational project shows you the techniques used for web scraping and API testing. Tested this Header Spoofing Code on https://wttd.trade/api/items/price-history using the DevTools Console & by executing the **spoof.py**
 
 ## ⚙️ What This Does

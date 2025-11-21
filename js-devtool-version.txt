@@ -1,0 +1,228 @@
+const url = "WEBSITE HERE";
+
+const USER_AGENTS = [
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15',
+    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+];
+
+function getRandomUserAgent() {
+    return USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)];
+}
+
+function getSpoofedHeaders() {
+    return {
+        'Accept': 'application/json, text/plain, */*',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache',
+    };
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function parseData(data) {
+    if (Array.isArray(data)) {
+        console.log(`\n📦 Found ${data.length} items\n`);
+        
+        data.forEach((item, index) => {
+            console.log(`\n--- Item ${index + 1} ---`);
+            
+            if (item.id) {
+                console.log(`🆔 ID: ${item.id}`);
+            }
+            
+            if (item.name) {
+                console.log(`📛 Name: ${item.name}`);
+            }
+            
+            if (item.history) {
+                if (Array.isArray(item.history)) {
+                    console.log(`📜 History: ${item.history.length} entries`);
+                    if (item.history.length > 0) {
+                        console.log(`   First entry:`, item.history[0]);
+                    }
+                } else {
+                    console.log(`📜 History:`, item.history);
+                }
+            }
+            
+            if (item.latest_date) {
+                console.log(`📅 Latest Date: ${item.latest_date}`);
+            }
+            
+            console.log('-'.repeat(40));
+        });
+        
+        return data;
+    } else if (typeof data === 'object' && data !== null) {
+        console.log('\n📦 Found single item\n');
+        
+        if (data.id) {
+            console.log(`🆔 ID: ${data.id}`);
+        }
+        
+        if (data.name) {
+            console.log(`📛 Name: ${data.name}`);
+        }
+        
+        if (data.history) {
+            if (Array.isArray(data.history)) {
+                console.log(`📜 History: ${data.history.length} entries`);
+                if (data.history.length > 0) {
+                    console.log(`   First entry:`, data.history[0]);
+                }
+            } else {
+                console.log(`📜 History:`, data.history);
+            }
+        }
+        
+        if (data.latest_date) {
+            console.log(`📅 Latest Date: ${data.latest_date}`);
+        }
+        
+        return data;
+    }
+    
+    return data;
+}
+
+async function makeStealthyRequest(targetUrl, delayRange = [1000, 3000]) {
+    try {
+        if (delayRange) {
+            const delay = Math.random() * (delayRange[1] - delayRange[0]) + delayRange[0];
+            console.log(`⏱️ Waiting ${(delay/1000).toFixed(2)} seconds (mimicking human behavior)...`);
+            await sleep(delay);
+        }
+        
+        console.log('🚀 Fetching data with spoofed headers...');
+        
+        const headers = getSpoofedHeaders();
+        console.log('📋 Using headers:', headers);
+        
+        const response = await fetch(targetUrl, {
+            method: 'GET',
+            headers: headers,
+            credentials: 'omit',
+            cache: 'no-cache'
+        });
+        
+        console.log(`📊 Status Code: ${response.status}`);
+        
+        if (response.ok) {
+            console.log('✅ Success! Data received:');
+            console.log('='.repeat(50));
+            
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                const data = await response.json();
+                
+                parseData(data);
+                
+                console.log('\n📄 Full JSON Response:');
+                console.log(JSON.stringify(data, null, 2));
+                
+                return data;
+            } else {
+                const text = await response.text();
+                console.log('Response is not JSON. Raw content:');
+                console.log(text.substring(0, 500));
+                return text;
+            }
+        } else {
+            console.error(`❌ Error: Received status code ${response.status}`);
+            const errorText = await response.text();
+            console.error(`Response: ${errorText.substring(0, 200)}`);
+            return null;
+        }
+        
+    } catch (error) {
+        if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+            console.error('❌ Error: CORS policy blocked the request or network error occurred');
+            console.log('💡 Tip: Browser security prevents modifying certain headers and cross-origin requests');
+        } else {
+            console.error(`❌ Error: ${error.message}`);
+        }
+        return null;
+    }
+}
+
+async function scrapeWithRotation(targetUrl, numRequests = 3) {
+    console.log('='.repeat(60));
+    console.log('🎓 EDUCATIONAL HEADER SPOOFING DEMONSTRATION');
+    console.log('⚠️  Only use on APIs/sites you own or have permission to access!');
+    console.log('='.repeat(60));
+    console.log('');
+    
+    const results = [];
+    
+    for (let i = 0; i < numRequests; i++) {
+        console.log(`\n${'='.repeat(60)}`);
+        console.log(`REQUEST ${i+1}/${numRequests}`);
+        console.log('='.repeat(60));
+        const result = await makeStealthyRequest(targetUrl);
+        if (result) {
+            results.push(result);
+        }
+    }
+    
+    console.log(`\n\n📈 Total successful requests: ${results.length}/${numRequests}`);
+    
+    if (results.length > 0) {
+        console.log('\n' + '='.repeat(60));
+        console.log('📊 SUMMARY OF ALL DATA');
+        console.log('='.repeat(60));
+        
+        results.forEach((result, idx) => {
+            console.log(`\nRequest ${idx + 1}:`);
+            if (Array.isArray(result)) {
+                result.forEach(item => {
+                    if (item.id && item.name) {
+                        console.log(`  - ${item.name} (ID: ${item.id})`);
+                    }
+                });
+            } else if (result.id && result.name) {
+                console.log(`  - ${result.name} (ID: ${result.id})`);
+            }
+        });
+    }
+    
+    return results;
+}
+
+// ==========================================
+// USAGE INSTRUCTIONS
+// ==========================================
+console.log(`
+🎯 USAGE INSTRUCTIONS:
+
+1. Single request with delay:
+   makeStealthyRequest("${url}")
+
+2. Single request without delay:
+   makeStealthyRequest("${url}", null)
+
+3. Multiple requests with rotation:
+   scrapeWithRotation("${url}", 3)
+
+🔍 This script will automatically extract and display:
+   - id (item identifier)
+   - name (item name)
+   - history (array of historical data)
+   - latest_date (most recent date)
+
+⚠️  IMPORTANT BROWSER LIMITATIONS:
+- Browsers prevent modifying User-Agent and other "forbidden headers" via JavaScript
+- CORS policy may block cross-origin requests
+- These limitations exist for security reasons
+- For full header control, use server-side code (Python, Node.js, etc.)
+
+📝 To run, just paste this entire code in the browser console and call the functions above.
+`);
+
+// Uncomment to run immediately:
+// makeStealthyRequest(url, null);

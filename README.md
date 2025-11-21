@@ -1,8 +1,3 @@
-![Repo views](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FDevArqf%2FAPI-Header-Spoofer&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Repo+Views&edge_flat=false)
-![Profile Views](https://komarev.com/ghpvc/?username=DevArqf&color=green&style=flat-square&label=Profile+Views)
-![Stars](https://img.shields.io/github/stars/DevArqf/API-Header-Spoofer?style=flat-square)
-![Forks](https://img.shields.io/github/forks/DevArqf/API-Header-Spoofer?style=flat-square)
-
 [![Star History Chart](https://api.star-history.com/svg?repos=DevArqf/API-Header-Spoofer&type=Date)](https://star-history.com/#DevArqf/API-Header-Spoofer&Date)
 
 Learn how HTTP header spoofing works through practical examples. This educational project shows you the techniques used for web scraping and API testing. Tested this Header Spoofing Code on https://wttd.trade/api/items/price-history using the DevTools Console & by executing the **spoof.py**

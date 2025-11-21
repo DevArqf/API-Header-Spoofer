@@ -1,5 +1,3 @@
-[![Star History Chart](https://api.star-history.com/svg?repos=DevArqf/API-Header-Spoofer&type=Date)](https://star-history.com/#DevArqf/API-Header-Spoofer&Date)
-
 Learn how HTTP header spoofing works through practical examples. This educational project shows you the techniques used for web scraping and API testing. Tested this Header Spoofing Code on https://wttd.trade/api/items/price-history using the DevTools Console & by executing the **spoof.py**
 
 ## ⚙️ What This Does
